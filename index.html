@@ -1,0 +1,633 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>FFXIV Heal Calculator | Lv100 ロール別回復量シミュレータ</title>
+<meta name="description" content="FFXIV Lv100 healing simulator. Compares Tank, DPS, Healer output for direct-heal skills like Clemency and Cure II. Formula based on AkhMorning Dawntrail model.">
+<meta property="og:title" content="FFXIV Heal Calculator">
+<meta property="og:description" content="Lv100 ロール別回復量シミュレータ - タンク・DPS・ヒラの回復量を比較">
+<meta property="og:type" content="website">
+<meta name="twitter:card" content="summary">
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=JetBrains+Mono:wght@300;400;500;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg-deep: #0a0e1a;
+  --bg-panel: #131826;
+  --bg-elevated: #1c2335;
+  --border: #3a4360;
+  --text-primary: #f2f5fb;
+  --text-dim: #b0b9cc;
+  --text-faded: #8590a5;
+  --text-label: #d8dee8;
+  --accent: #d9b87a;
+  --tank: #5fa3e8;
+  --dps: #e66767;
+  --healer: #6dcf8d;
+  --shadow-glow: rgba(217, 184, 122, 0.12);
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  background: var(--bg-deep);
+  background-image:
+    radial-gradient(circle at 15% 20%, rgba(95, 163, 232, 0.05) 0%, transparent 40%),
+    radial-gradient(circle at 85% 80%, rgba(109, 207, 141, 0.05) 0%, transparent 40%),
+    radial-gradient(circle at 50% 50%, rgba(230, 103, 103, 0.03) 0%, transparent 50%);
+  color: var(--text-primary);
+  font-family: 'JetBrains Mono', monospace;
+  min-height: 100vh;
+  padding: clamp(20px, 3vw, 44px) clamp(14px, 2.5vw, 28px);
+  letter-spacing: 0.02em;
+  font-size: clamp(15px, 1vw + 11px, 18px);
+}
+
+.container {
+  max-width: 1400px;
+  margin: 0 auto;
+  width: 100%;
+}
+
+header {
+  text-align: center;
+  margin-bottom: clamp(24px, 4vw, 50px);
+  position: relative;
+}
+
+header::before, header::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  width: 80px;
+  height: 1px;
+  background: linear-gradient(to right, transparent, var(--accent), transparent);
+}
+header::before { left: 20%; }
+header::after { right: 20%; }
+
+h1 {
+  font-family: 'Cinzel', serif;
+  font-weight: 600;
+  font-size: clamp(1.4rem, 3.5vw, 2.4rem);
+  letter-spacing: 0.15em;
+  color: var(--accent);
+  text-shadow: 0 0 30px var(--shadow-glow);
+  margin-bottom: 12px;
+  text-transform: uppercase;
+}
+
+.subtitle {
+  font-size: clamp(0.75rem, 1vw, 0.88rem);
+  color: var(--text-dim);
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+}
+
+.common-inputs {
+  background: var(--bg-panel);
+  border: 1px solid var(--border);
+  padding: clamp(16px, 2.5vw, 28px);
+  margin-bottom: clamp(20px, 3vw, 30px);
+  border-radius: 2px;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: clamp(12px, 2vw, 20px);
+  align-items: end;
+}
+
+.common-inputs button {
+  width: 100%;
+  min-width: 120px;
+}
+
+.field label {
+  font-size: 0.88rem;
+  color: var(--text-label);
+  text-transform: uppercase;
+  letter-spacing: 0.15em;
+  margin-bottom: 9px;
+  font-weight: 600;
+  min-height: 1.1em;
+  display: block;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.field input, .field select {
+  background: var(--bg-deep);
+  border: 1px solid var(--border);
+  color: var(--text-primary);
+  padding: 12px 16px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 1.05rem;
+  font-weight: 500;
+  border-radius: 2px;
+  transition: border-color 0.2s, box-shadow 0.2s;
+  width: 100%;
+  min-width: 0;
+}
+
+.field select {
+  cursor: pointer;
+  appearance: none;
+  -webkit-appearance: none;
+  background-image: linear-gradient(45deg, transparent 50%, var(--text-dim) 50%),
+                    linear-gradient(135deg, var(--text-dim) 50%, transparent 50%);
+  background-position: calc(100% - 16px) 50%, calc(100% - 11px) 50%;
+  background-size: 5px 5px;
+  background-repeat: no-repeat;
+  padding-right: 28px;
+}
+
+.field select optgroup {
+  background: var(--bg-deep);
+  color: var(--accent);
+  font-style: normal;
+  font-weight: 600;
+}
+
+.field select option {
+  background: var(--bg-deep);
+  color: var(--text-primary);
+}
+
+.field input:focus, .field select:focus {
+  outline: none;
+  border-color: var(--accent);
+  box-shadow: 0 0 0 1px var(--accent), 0 0 20px var(--shadow-glow);
+}
+
+.field input:disabled {
+  background: rgba(10, 14, 26, 0.4);
+  color: var(--text-faded);
+  cursor: not-allowed;
+  border-color: rgba(42, 49, 71, 0.5);
+}
+
+.field.disabled label {
+  color: var(--text-faded);
+}
+
+button {
+  background: var(--accent);
+  color: var(--bg-deep);
+  border: none;
+  padding: 13px 36px;
+  font-family: 'Cinzel', serif;
+  font-weight: 700;
+  font-size: clamp(0.95rem, 1.2vw, 1.05rem);
+  letter-spacing: 0.2em;
+  cursor: pointer;
+  border-radius: 2px;
+  transition: all 0.2s;
+  text-transform: uppercase;
+}
+
+button:hover {
+  background: #d9b97e;
+  box-shadow: 0 0 30px rgba(201, 169, 110, 0.4);
+  transform: translateY(-1px);
+}
+
+.roles {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: clamp(14px, 2vw, 20px);
+  margin-bottom: clamp(20px, 3vw, 30px);
+}
+
+.role-card {
+  background: var(--bg-panel);
+  border: 1px solid var(--border);
+  border-top-width: 3px;
+  padding: clamp(16px, 2.5vw, 26px);
+  border-radius: 2px;
+  position: relative;
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.role-card.tank { border-top-color: var(--tank); }
+.role-card.dps { border-top-color: var(--dps); }
+.role-card.healer { border-top-color: var(--healer); }
+
+.role-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.4);
+}
+
+.role-header {
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+  margin-bottom: 20px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid var(--border);
+}
+
+.role-name {
+  font-family: 'Cinzel', serif;
+  font-weight: 700;
+  font-size: clamp(1.2rem, 1.6vw, 1.5rem);
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+}
+
+.role-card.tank .role-name { color: var(--tank); }
+.role-card.dps .role-name { color: var(--dps); }
+.role-card.healer .role-name { color: var(--healer); }
+
+.role-subtitle {
+  font-size: clamp(0.78rem, 1vw, 0.9rem);
+  color: var(--text-dim);
+  letter-spacing: 0.15em;
+  font-weight: 500;
+}
+
+.field {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.input-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  min-width: 0;
+}
+
+.input-grid .field input,
+.input-grid .field select {
+  font-size: 1rem;
+  padding: 10px 14px;
+}
+
+.full-width { grid-column: 1 / -1; }
+
+.results {
+  background: var(--bg-panel);
+  border: 1px solid var(--border);
+  border-radius: 2px;
+  overflow: hidden;
+  display: none;
+}
+
+.results.active {
+  display: block;
+  animation: fadeUp 0.4s ease-out;
+}
+
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.results-header {
+  padding: 20px 26px;
+  background: var(--bg-elevated);
+  border-bottom: 1px solid var(--border);
+  font-family: 'Cinzel', serif;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--accent);
+  font-size: clamp(0.95rem, 1.2vw, 1.1rem);
+  font-weight: 600;
+}
+
+.table-wrapper {
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  min-width: 520px;
+}
+
+th, td {
+  padding: clamp(13px, 1.8vw, 18px) clamp(14px, 2vw, 26px);
+  text-align: right;
+  border-bottom: 1px solid var(--border);
+  white-space: nowrap;
+}
+
+th {
+  font-size: clamp(0.78rem, 1vw, 0.88rem);
+  color: var(--text-label);
+  text-transform: uppercase;
+  letter-spacing: 0.15em;
+  font-weight: 600;
+  background: var(--bg-deep);
+}
+
+th:first-child, td:first-child {
+  text-align: left;
+}
+
+tbody tr:last-child td { border-bottom: none; }
+
+.role-cell {
+  font-family: 'Cinzel', serif;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  font-size: clamp(1rem, 1.2vw, 1.15rem);
+}
+
+.role-cell.tank { color: var(--tank); }
+.role-cell.dps { color: var(--dps); }
+.role-cell.healer { color: var(--healer); }
+
+.heal-value {
+  font-size: clamp(1.1rem, 1.4vw, 1.3rem);
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.percent {
+  font-weight: 600;
+  font-size: clamp(1rem, 1.2vw, 1.15rem);
+}
+
+.percent.high { color: var(--healer); }
+.percent.mid { color: var(--accent); }
+.percent.low { color: var(--text-dim); }
+
+.range {
+  font-size: clamp(0.85rem, 1vw, 0.95rem);
+  color: var(--text-dim);
+}
+
+.notes {
+  margin-top: clamp(24px, 3vw, 36px);
+  padding: clamp(18px, 2.5vw, 26px);
+  background: var(--bg-panel);
+  border-left: 3px solid var(--accent);
+  border-radius: 2px;
+}
+
+.notes h3 {
+  font-family: 'Cinzel', serif;
+  font-size: clamp(0.9rem, 1.1vw, 1rem);
+  letter-spacing: 0.2em;
+  color: var(--accent);
+  text-transform: uppercase;
+  margin-bottom: 14px;
+  font-weight: 700;
+}
+
+.notes ul {
+  list-style: none;
+  font-size: clamp(0.92rem, 1vw, 1rem);
+  color: var(--text-dim);
+  line-height: 1.85;
+}
+
+.notes li::before {
+  content: '◆';
+  color: var(--accent);
+  margin-right: 10px;
+  font-size: 0.7rem;
+  vertical-align: middle;
+}
+
+@media (max-width: 480px) {
+  header::before, header::after { display: none; }
+  .input-grid { grid-template-columns: 1fr; }
+  h1 { letter-spacing: 0.08em; }
+}
+</style>
+</head>
+<body>
+
+<div class="container">
+
+<header>
+  <h1>Heal Calculator</h1>
+  <div class="subtitle">FFXIV Lv.100 — Role Comparison</div>
+</header>
+
+<div class="common-inputs">
+  <div class="field">
+    <label>威力 (Potency)</label>
+    <input type="number" id="potency" value="1000" min="0">
+  </div>
+  <div class="field">
+    <label>回復量バフ (%)</label>
+    <input type="number" id="buff" value="0" step="1">
+  </div>
+  <button onclick="calculate()">Calculate</button>
+</div>
+
+<div class="roles">
+
+  <!-- TANK -->
+  <div class="role-card tank">
+    <div class="role-header">
+      <div class="role-name">Tank</div>
+      <div class="role-subtitle">STR</div>
+    </div>
+    <div class="input-grid">
+      <div class="field"><label>主ステ(STR)</label><input type="number" id="t_stat" value="6381"></div>
+      <div class="field"><label>DET</label><input type="number" id="t_det" value="2977"></div>
+      <div class="field"><label>TNC</label><input type="number" id="t_tnc" value="622"></div>
+      <div class="field"><label>WD</label><input type="number" id="t_wd" value="154"></div>
+      <div class="field full-width">
+        <label>ジョブ</label>
+        <select id="t_job">
+          <option value="100" selected>ナイト (100)</option>
+          <option value="105">戦士 (105)</option>
+          <option value="105">暗黒騎士 (105)</option>
+          <option value="100">ガンブレイカー (100)</option>
+        </select>
+      </div>
+    </div>
+  </div>
+
+  <!-- DPS -->
+  <div class="role-card dps">
+    <div class="role-header">
+      <div class="role-name">DPS</div>
+      <div class="role-subtitle">STR / DEX / INT</div>
+    </div>
+    <div class="input-grid">
+      <div class="field"><label>主ステ(STR/DEX/INT)</label><input type="number" id="d_stat" value="6465"></div>
+      <div class="field"><label>DET</label><input type="number" id="d_det" value="2991"></div>
+      <div class="field disabled"><label>TNC</label><input type="text" value="N/A" disabled></div>
+      <div class="field"><label>WD</label><input type="number" id="d_wd" value="157"></div>
+      <div class="field full-width">
+        <label>ジョブ</label>
+        <select id="d_job">
+          <optgroup label="近接物理">
+            <option value="110">モンク (110)</option>
+            <option value="115">竜騎士 (115)</option>
+            <option value="110">忍者 (110)</option>
+            <option value="112">侍 (112)</option>
+            <option value="115">リーパー (115)</option>
+            <option value="100">ヴァイパー (100)</option>
+          </optgroup>
+          <optgroup label="遠隔物理">
+            <option value="115">詩人 (115)</option>
+            <option value="115">機工士 (115)</option>
+            <option value="115">踊り子 (115)</option>
+          </optgroup>
+          <optgroup label="魔法DPS">
+            <option value="115" selected>黒魔道士 (115)</option>
+            <option value="115">召喚士 (115)</option>
+            <option value="115">赤魔道士 (115)</option>
+            <option value="115">ピクトマンサー (115)</option>
+          </optgroup>
+        </select>
+      </div>
+    </div>
+  </div>
+
+  <!-- HEALER -->
+  <div class="role-card healer">
+    <div class="role-header">
+      <div class="role-name">Healer</div>
+      <div class="role-subtitle">MND</div>
+    </div>
+    <div class="input-grid">
+      <div class="field"><label>主ステ(MND)</label><input type="number" id="h_stat" value="6062"></div>
+      <div class="field"><label>DET</label><input type="number" id="h_det" value="2498"></div>
+      <div class="field disabled"><label>TNC</label><input type="text" value="N/A" disabled></div>
+      <div class="field"><label>WD</label><input type="number" id="h_wd" value="154"></div>
+      <div class="field full-width">
+        <label>ジョブ</label>
+        <select id="h_job">
+          <option value="115" selected>白魔道士 (115)</option>
+          <option value="115">学者 (115)</option>
+          <option value="115">占星術師 (115)</option>
+          <option value="115">賢者 (115)</option>
+        </select>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<div class="results" id="results">
+  <div class="results-header">Calculation Output</div>
+  <div class="table-wrapper">
+  <table>
+    <thead>
+      <tr>
+        <th>Role</th>
+        <th>期待値 (HP)</th>
+        <th>±3% 範囲</th>
+        <th>ヒラ比</th>
+        <th>差</th>
+      </tr>
+    </thead>
+    <tbody id="resultBody"></tbody>
+  </table>
+  </div>
+</div>
+
+<div class="notes">
+  <h3>Notes</h3>
+  <ul>
+    <li>Lv100基準: MAIN=440, SUB=420, DIV=2780</li>
+    <li>主ステ回復係数: 179 (7ジョブ×10回の実測平均から逆算)</li>
+    <li>不屈係数: 112 (Dawntrail更新), Trait: ヒラのみ×1.3</li>
+    <li>直接回復スキル対象（クレメンシー/エクリブリウム/ケアルラ等）</li>
+    <li>クリ・DH非考慮。乱数±3%、10回平均で誤差±1%以内</li>
+    <li>バフは最終値に乗算（威力増加と同等）</li>
+  </ul>
+</div>
+
+</div>
+
+<script>
+const MAIN = 440;
+const SUB = 420;
+const DIV = 2780;
+
+function fStat(stat, A) {
+  return Math.floor(A * (stat - MAIN) / MAIN + 100);
+}
+function fDET(det) {
+  return Math.floor(140 * (det - MAIN) / DIV + 1000);
+}
+function fTNC(tnc) {
+  return Math.floor(112 * (tnc - SUB) / DIV + 1000);
+}
+function fWD(wd, jm) {
+  return Math.floor(MAIN * jm / 1000 + wd);
+}
+
+function calcHeal(P, stat, det, tnc, wd, jm, isTank, isHealer) {
+  const A = 179;  // 主ステ係数（実測10回×7ジョブの平均逆算値）
+  const fS = fStat(stat, A);
+  const fD = fDET(det);
+  const fT = isTank ? fTNC(tnc) : 1000;
+  const fW = fWD(wd, jm);
+  const trait = isHealer ? 130 : 100;
+
+  let H1 = Math.floor(Math.floor(P * fS * fD / 100) / 1000);
+  let H2 = Math.floor(H1 * fT / 1000);
+  H2 = Math.floor(H2 * fW / 100);
+  H2 = Math.floor(H2 * trait / 100);
+  return H2;
+}
+
+function num(id) { return parseFloat(document.getElementById(id).value) || 0; }
+
+function fmt(n) { return Math.round(n).toLocaleString(); }
+
+function calculate() {
+  const P = num('potency');
+  const buff = num('buff') / 100;
+
+  const tank = calcHeal(P, num('t_stat'), num('t_det'), num('t_tnc'), num('t_wd'), num('t_job'), true, false);
+  const dps  = calcHeal(P, num('d_stat'), num('d_det'), 0, num('d_wd'), num('d_job'), false, false);
+  const heal = calcHeal(P, num('h_stat'), num('h_det'), 0, num('h_wd'), num('h_job'), false, true);
+
+  const T = Math.floor(tank * (1 + buff));
+  const D = Math.floor(dps * (1 + buff));
+  const H = Math.floor(heal * (1 + buff));
+
+  const rows = [
+    { role: 'Tank', cls: 'tank', val: T },
+    { role: 'DPS', cls: 'dps', val: D },
+    { role: 'Healer', cls: 'healer', val: H }
+  ];
+
+  const tbody = document.getElementById('resultBody');
+  tbody.innerHTML = '';
+
+  rows.forEach(r => {
+    const pct = H > 0 ? (r.val / H * 100) : 0;
+    const diff = r.val - H;
+    const lo = Math.floor(r.val * 0.97);
+    const hi = Math.floor(r.val * 1.03);
+    const pctClass = pct >= 99 ? 'high' : pct >= 80 ? 'mid' : 'low';
+    const diffStr = diff === 0 ? '—' : (diff > 0 ? '+' : '') + fmt(diff);
+
+    tbody.innerHTML += `
+      <tr>
+        <td class="role-cell ${r.cls}">${r.role}</td>
+        <td class="heal-value">${fmt(r.val)}</td>
+        <td class="range">${fmt(lo)} – ${fmt(hi)}</td>
+        <td class="percent ${pctClass}">${pct.toFixed(1)}%</td>
+        <td class="range">${diffStr}</td>
+      </tr>
+    `;
+  });
+
+  document.getElementById('results').classList.add('active');
+}
+
+// 初期計算
+window.addEventListener('load', calculate);
+</script>
+
+</body>
+</html>
