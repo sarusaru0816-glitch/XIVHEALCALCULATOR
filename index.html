@@ -4,9 +4,9 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title data-i18n="title">FFXIV Heal Calculator | 黄金のレガシー ロール別回復量シミュレータ</title>
-<meta name="description" content="FFXIV DAWNTRAIL healing simulator. Compares Tank, DPS, Healer output for direct-heal skills like Clemency and Cure II. Formula based on AkhMorning Dawntrail model.">
+<meta name="description" content="FFXIV Dawntrail healing simulator. Compares Tank, DPS, Healer output for direct-heal skills like Clemency and Cure II. Formula based on AkhMorning Dawntrail model.">
 <meta property="og:title" content="FFXIV Heal Calculator">
-<meta property="og:description" content="DAWNTRAIL Role-based Healing Simulator - Tank/DPS/Healer comparison">
+<meta property="og:description" content="黄金のレガシー ロール別回復量シミュレータ - タンク・DPS・ヒラの回復量を比較">
 <meta property="og:type" content="website">
 <meta name="twitter:card" content="summary">
 <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=JetBrains+Mono:wght@300;400;500;700&display=swap" rel="stylesheet">
@@ -212,7 +212,13 @@ button:hover {
 
 .table-wrapper { overflow-x: auto; -webkit-overflow-scrolling: touch; }
 
-table { width: 100%; border-collapse: collapse; min-width: 520px; }
+table { width: 100%; border-collapse: collapse; min-width: 520px; table-layout: fixed; }
+
+col.col-role { width: 18%; }
+col.col-val { width: 22%; }
+col.col-range { width: 24%; }
+col.col-pct { width: 18%; }
+col.col-diff { width: 18%; }
 
 th, td {
   padding: clamp(13px, 1.8vw, 18px) clamp(14px, 2vw, 26px);
@@ -295,7 +301,7 @@ tbody tr:last-child td { border-bottom: none; }
     <button id="lang-en" onclick="setLang('en')">EN</button>
   </div>
   <h1 data-i18n="appTitle">Heal Calculator</h1>
-  <div class="subtitle" data-i18n="appSubtitle">FFXIV DAWNTRAIL — Role Comparison</div>
+  <div class="subtitle" data-i18n="appSubtitle">FFXIV 黄金のレガシー — ロール比較</div>
 </header>
 
 <div class="common-inputs">
@@ -402,6 +408,13 @@ tbody tr:last-child td { border-bottom: none; }
   <div class="results-header" data-i18n="resultsHeader">Calculation Output</div>
   <div class="table-wrapper">
   <table>
+    <colgroup>
+      <col class="col-role">
+      <col class="col-val">
+      <col class="col-range">
+      <col class="col-pct">
+      <col class="col-diff">
+    </colgroup>
     <thead>
       <tr>
         <th data-i18n="thRole">Role</th>
