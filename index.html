@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title data-i18n="title">FFXIV Heal Calculator | Lv100 ロール別回復量シミュレータ</title>
+<title data-i18n="title">FFXIV Heal Calculator | 黄金のレガシー ロール別回復量シミュレータ</title>
 <meta name="description" content="FFXIV Lv100 healing simulator. Compares Tank, DPS, Healer output for direct-heal skills like Clemency and Cure II. Formula based on AkhMorning Dawntrail model.">
 <meta property="og:title" content="FFXIV Heal Calculator">
 <meta property="og:description" content="Lv100 Role-based Healing Simulator - Tank/DPS/Healer comparison">
@@ -295,7 +295,7 @@ tbody tr:last-child td { border-bottom: none; }
     <button id="lang-en" onclick="setLang('en')">EN</button>
   </div>
   <h1 data-i18n="appTitle">Heal Calculator</h1>
-  <div class="subtitle" data-i18n="appSubtitle">FFXIV Lv.100 — Role Comparison</div>
+  <div class="subtitle" data-i18n="appSubtitle">FFXIV DAWNTRAIL — Role Comparison</div>
 </header>
 
 <div class="common-inputs">
@@ -436,7 +436,7 @@ const i18n = {
   ja: {
     title: "FFXIV Heal Calculator | Lv100 ロール別回復量シミュレータ",
     appTitle: "Heal Calculator",
-    appSubtitle: "FFXIV Lv.100 — ロール比較",
+    appSubtitle: "FFXIV 黄金のレガシー — ロール比較",
     potency: "威力 (Potency)",
     buff: "回復量バフ (%)",
     calcBtn: "計算",
@@ -452,7 +452,7 @@ const i18n = {
     thDiff: "差",
     notesTitle: "Notes",
     note1: "Lv100基準: MAIN=440, SUB=420, DIV=2780",
-    note2: "主ステ回復係数: 179 (7ジョブ×10回の実測平均から逆算)",
+    note2: "主ステ回復係数: 179",
     note3: "不屈係数: 112 (Dawntrail更新), Trait: ヒラのみ×1.3",
     note4: "直接回復スキル対象（クレメンシー/エクリブリウム/ケアルラ等）",
     note5: "クリ・DH非考慮。乱数±3%、10回平均で誤差±1%以内",
@@ -471,7 +471,7 @@ const i18n = {
   en: {
     title: "FFXIV Heal Calculator | Lv100 Role-based Healing Simulator",
     appTitle: "Heal Calculator",
-    appSubtitle: "FFXIV Lv.100 — Role Comparison",
+    appSubtitle: "FFXIV DAWNTRAIL — Role Comparison",
     potency: "Potency",
     buff: "Healing Buff (%)",
     calcBtn: "Calculate",
@@ -487,7 +487,7 @@ const i18n = {
     thDiff: "Diff",
     notesTitle: "Notes",
     note1: "Lv100 base: MAIN=440, SUB=420, DIV=2780",
-    note2: "Main stat coefficient: 179 (avg. of 7 jobs × 10 measurements)",
+    note2: "Main stat coefficient: 179",
     note3: "TNC coefficient: 112 (Dawntrail), Trait: Healer only ×1.3",
     note4: "For direct-heal skills (Clemency / Equilibrium / Cure II, etc.)",
     note5: "Excludes crit/DH. ±3% RNG, 10-sample avg. within ±1%",
