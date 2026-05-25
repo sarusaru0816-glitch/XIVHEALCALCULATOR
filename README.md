@@ -13,7 +13,7 @@ FFXIV Lv100 healing simulator. Compares Tank, DPS, Healer output for direct-heal
 ## Formula
 
 ```
-H1 = ⌊⌊P × f(主ステ) × f(DET)⌋/100⌋/1000⌋
+H1 = ⌊⌊P × f(mainstats) × f(DET)⌋/100⌋/1000⌋
 H2 = ⌊⌊⌊⌊H1 × f(TNC)⌋/1000⌋ × f(WD)⌋/100⌋ × Trait⌋/100⌋
 
 f(主ステ) = ⌊179 × (Stat - 440)/440 + 100⌋
