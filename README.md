@@ -23,7 +23,7 @@ f(WD)     = ⌊440 × JobMod/1000 + WD⌋
 Trait     = 1.30 (Healer) / 1.00 (Tank, DPS)
 ```
 
-Lv100基準値: MAIN=440, SUB=420, DIV=2780
+Lv100 base values: MAIN=440, SUB=420, DIV=2780
 
 ## License
 
