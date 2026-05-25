@@ -2,17 +2,13 @@
 
 FFXIV Lv100 healing simulator. Compares Tank, DPS, Healer output for direct-heal skills like Clemency and Cure II. Inputs: main stat, DET, TNC, WD, job, potency, buff %. Outputs expected HP, ±3% range, healer ratio, and difference. Formula uses AkhMorning Dawntrail model with main stat coefficient 179.
 
-## Demo
-
-`https://[your-username].github.io/[repo-name]/`
-
 ## Features
 
-- 3ロール（Tank / DPS / Healer）の理論回復量を同時計算
-- ジョブ別 JobMod プルダウン（タンク4種・DPS13種・ヒラ4種）
-- 回復量バフ（%）対応
-- 乱数±3%の範囲表示
-- ヒラ比・差分を即座に表示
+- Simultaneously calculates the theoretical healing output for all three roles (Tank / DPS / Healer)
+- Job-specific JobMod dropdowns (4 tanks, 13 DPS, 4 healers)
+- Supports healing potency buffs (%)
+- Displays the ±3% random variance range
+- Instantly shows healer ratio and difference
 
 ## Formula
 
