@@ -289,6 +289,27 @@ tbody tr:last-child td { border-bottom: none; }
   .input-grid { grid-template-columns: 1fr; }
   h1 { letter-spacing: 0.08em; }
 }
+
+footer {
+  margin-top: clamp(28px, 4vw, 44px);
+  padding-top: clamp(20px, 3vw, 28px);
+  border-top: 1px solid var(--border);
+  text-align: center;
+  color: var(--text-faded);
+  font-size: clamp(0.72rem, 0.85vw, 0.8rem);
+  line-height: 1.7;
+  letter-spacing: 0.05em;
+}
+
+footer .copyright {
+  color: var(--text-dim);
+  margin-bottom: 4px;
+}
+
+footer .disclaimer {
+  font-size: 0.92em;
+  opacity: 0.85;
+}
 </style>
 </head>
 <body>
@@ -441,6 +462,11 @@ tbody tr:last-child td { border-bottom: none; }
   </ul>
 </div>
 
+<footer>
+  <div class="copyright">FINAL FANTASY XIV © 2010 - 2024 SQUARE ENIX CO., LTD. All Rights Reserved.</div>
+  <div class="disclaimer" data-i18n="disclaimer">本サイトは株式会社スクウェア・エニックスとは無関係の非公式ファンツールです</div>
+</footer>
+
 </div>
 
 <script>
@@ -452,7 +478,7 @@ const i18n = {
     appSubtitle: "FFXIV 黄金のレガシー — ロール比較",
     potency: "威力 (Potency)",
     buff: "回復量バフ (%)",
-    calcBtn: "計算",
+    calcBtn: "Calculate",
     mainStatSTR: "主ステ(STR)",
     mainStatDPS: "主ステ(STR/DEX/INT)",
     mainStatMND: "主ステ(MND)",
@@ -470,6 +496,7 @@ const i18n = {
     note4: "直接回復スキル対象（クレメンシー/エクリブリウム/ケアルラ等）",
     note5: "クリ・DH非考慮。乱数±3%、10回平均で誤差±1%以内",
     note6: "バフは最終値に乗算（威力増加と同等）",
+    disclaimer: "本サイトは株式会社スクウェア・エニックスとは無関係の非公式ファンツールです",
     tankRole: "Tank", dpsRole: "DPS", healerRole: "Healer",
     optgroups: { melee: "近接物理", ranged: "遠隔物理", caster: "魔法DPS" },
     jobs: {
@@ -505,6 +532,7 @@ const i18n = {
     note4: "For direct-heal skills (Clemency / Equilibrium / Cure II, etc.)",
     note5: "Excludes crit/DH. ±3% RNG, 10-sample avg. within ±1%",
     note6: "Buff applies as final multiplier (equivalent to potency increase)",
+    disclaimer: "This is an unofficial fan tool, not affiliated with SQUARE ENIX CO., LTD.",
     tankRole: "Tank", dpsRole: "DPS", healerRole: "Healer",
     optgroups: { melee: "Melee", ranged: "Ranged Physical", caster: "Caster" },
     jobs: {
