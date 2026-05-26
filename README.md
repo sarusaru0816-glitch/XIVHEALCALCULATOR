@@ -32,4 +32,5 @@ MIT
 ## Copyright
 
 FINAL FANTASY XIV © 2010 - 2024 SQUARE ENIX CO., LTD. All Rights Reserved.
+
 This is an unofficial fan tool, not affiliated with SQUARE ENIX CO., LTD.
