@@ -1,6 +1,6 @@
-# FFXIV Heal Calculator
+# XIV Heal Calculator
 
-FFXIV Lv100 healing simulator. Compares Tank, DPS, Healer output for direct-heal skills like Clemency and Cure II. Inputs: main stat, DET, TNC, WD, job, potency, buff %. Outputs expected HP, ±3% range, healer ratio, and difference. Formula uses AkhMorning Dawntrail model with main stat coefficient 179.
+FFXIV DAWNTRAIL healing simulator. Compares Tank, DPS, Healer output for direct-heal skills like Clemency and Cure II. Inputs: main stat, DET, TNC, WD, job, potency, buff %. Outputs expected HP, ±3% range, healer ratio, and difference. Formula uses AkhMorning Dawntrail model with main stat coefficient 179.
 
 ## Features
 
@@ -28,3 +28,8 @@ Lv100 base values: MAIN=440, SUB=420, DIV=2780
 ## License
 
 MIT
+
+## Copyright
+
+FINAL FANTASY XIV © 2010 - 2024 SQUARE ENIX CO., LTD. All Rights Reserved.
+This is an unofficial fan tool, not affiliated with SQUARE ENIX CO., LTD.
