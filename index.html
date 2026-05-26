@@ -212,13 +212,14 @@ button:hover {
 
 .table-wrapper { overflow-x: auto; -webkit-overflow-scrolling: touch; }
 
-table { width: 100%; border-collapse: collapse; min-width: 520px; table-layout: fixed; }
+table { width: 100%; border-collapse: collapse; min-width: 620px; table-layout: fixed; }
 
-col.col-role { width: 18%; }
-col.col-val { width: 22%; }
-col.col-range { width: 24%; }
-col.col-pct { width: 18%; }
-col.col-diff { width: 18%; }
+col.col-role { width: 13%; }
+col.col-val { width: 19%; }
+col.col-range { width: 21%; }
+col.col-pct { width: 13%; }
+col.col-diff { width: 14%; }
+col.col-eq { width: 20%; }
 
 th, td {
   padding: clamp(13px, 1.8vw, 18px) clamp(14px, 2vw, 26px);
@@ -435,6 +436,7 @@ footer .disclaimer {
       <col class="col-range">
       <col class="col-pct">
       <col class="col-diff">
+      <col class="col-eq">
     </colgroup>
     <thead>
       <tr>
@@ -443,6 +445,7 @@ footer .disclaimer {
         <th data-i18n="thRange">±3% 範囲</th>
         <th data-i18n="thRatio">ヒラ比</th>
         <th data-i18n="thDiff">差</th>
+        <th data-i18n="thEq">ヒラ威力換算</th>
       </tr>
     </thead>
     <tbody id="resultBody"></tbody>
@@ -489,6 +492,7 @@ const i18n = {
     thRange: "±3% 範囲",
     thRatio: "ヒラ比",
     thDiff: "差",
+    thEq: "ヒラ威力換算",
     notesTitle: "Notes",
     note1: "Lv100基準: MAIN=440, SUB=420, DIV=2780",
     note2: "主ステ回復係数: 179",
@@ -525,6 +529,7 @@ const i18n = {
     thRange: "±3% Range",
     thRatio: "vs Healer",
     thDiff: "Diff",
+    thEq: "Healer Eq.",
     notesTitle: "Notes",
     note1: "Lv100 base: MAIN=440, SUB=420, DIV=2780",
     note2: "Main stat coefficient: 179",
@@ -642,6 +647,7 @@ function calculate() {
     const hi = Math.floor(r.val * 1.03);
     const pctClass = pct >= 99 ? 'high' : pct >= 80 ? 'mid' : 'low';
     const diffStr = diff === 0 ? '—' : (diff > 0 ? '+' : '') + fmt(diff);
+    const eqPotency = H > 0 ? Math.round(P * r.val / H) : 0;
 
     tbody.innerHTML += `
       <tr>
@@ -650,6 +656,7 @@ function calculate() {
         <td class="range">${fmt(lo)} – ${fmt(hi)}</td>
         <td class="percent ${pctClass}">${pct.toFixed(1)}%</td>
         <td class="range">${diffStr}</td>
+        <td class="heal-value">${fmt(eqPotency)}</td>
       </tr>
     `;
   });
